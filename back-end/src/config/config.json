@@ -1,0 +1,23 @@
+{
+  "test3": {
+    "user": "wasplab",
+    "host": "localhost",
+    "database": "test3",
+    "password": "wasplab",
+    "port": 5432
+  },
+  "flowDB": {
+    "user": "wasplab",
+    "host": "localhost",
+    "database": "flowDB",
+    "password": "wasplab",
+    "port": 5432
+  },
+  "activiti": {
+    "user": "wasplab",
+    "host": "localhost",
+    "database": "activiti",
+    "password": "wasplab",
+    "port": 5432
+  }
+}
