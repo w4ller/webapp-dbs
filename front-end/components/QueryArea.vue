@@ -1,8 +1,11 @@
 <template>
   <div class="q-pa-md">
     <q-input v-model="text" type="textarea"/>
-    <q-btn @click="sendQuery"></q-btn>
 
+    <div class="q-gutter-xs">
+      <q-separator/>
+      <q-btn @click="sendQuery">Send query</q-btn>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>

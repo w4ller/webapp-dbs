@@ -9,16 +9,7 @@
 import {ref} from "vue";
 import DataTable from "~/components/DataTable.vue";
 
-const data: any = ref([
-  {
-    id: '1',
-    label: 'prova1'
-  },
-  {
-    id: '2',
-    label: 'prova2'
-  }
-])
+const data: any = ref([])
 
 function onData(payload: string) {
   data.value = payload
