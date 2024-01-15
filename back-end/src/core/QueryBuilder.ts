@@ -4,6 +4,7 @@
  *  flowDB: select * from picture_blacklist WHERE media_id = @0;
  */
 import {DbsSingletonService} from "../service/DbsSingleton.service";
+import {BlacklistQueryCommandsEnum} from "./BlacklistQueryCommands.enum";
 export class QueryBuilder {
 
     constructor() {
@@ -16,8 +17,16 @@ export class QueryBuilder {
             return params[idxArray] || match
         })
     }
+
+    private thorwErrorOnBlacklistCommands(query: String) {
+        if (Object.values(BlacklistQueryCommandsEnum)
+            .some(value => query.toUpperCase().includes(value.toUpperCase()))) {
+            throw new Error('Modify or write databases is not allowed')
+        }
+    }
     private async singleQuery(query: string, params: Array<string> = null): Promise<any> {
-        if (!query) return
+        if (!query) throw new Error ('No query to execute')
+        this.thorwErrorOnBlacklistCommands(query)
         const [db , sql] = query.split(':')
         const sqlWithParams = params ? this.replaceParams(sql, params) : sql
         const result = await DbsSingletonService.getInstance().db(db.trim()).query(`${sqlWithParams};`)
@@ -48,10 +57,8 @@ export class QueryBuilder {
         for (let n = 0; n <= queries.length - 1; n++) {
             const r = await this.singleQuery(queries[n], params[n-1] )
             n !== queries.length -1 ? params.push(this.formatParams(r)) : result = r
-         //   result.push(n === queries.length -1 ? r : this.formatParams(r))
         }
         return result.rows ?? []
-       // return result.map((r: any) => {return r?.rows})[0] ?? []
     }
     async build(query: string): Promise<any> {
         return this.parseQuery(query)

@@ -1,5 +1,5 @@
 import BaseController from "./Base.controller";
-import express = require('express')
+import express from 'express'
 import {QueryBuilder} from "../core/QueryBuilder";
 
 
@@ -18,7 +18,7 @@ export class QueryDbController extends BaseController {
         } catch (error: any) {
             _response.send({
                 error: {
-                    message:error.message,
+                    message: error.message,
                     stack: error.stack
                 },
 
@@ -27,7 +27,7 @@ export class QueryDbController extends BaseController {
     }
 
     public intializeRoutes() {
-        this.router.get(this.url, this.query)
+        this.router.post(this.url, this.query)
     }
 
 }
