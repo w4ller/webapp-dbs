@@ -1,7 +1,7 @@
 <template>
   <div>
     <QueryArea @outputData="onData"></QueryArea>
-    <DataTable :data="data"></DataTable>
+    <DataTable :data="data" @outputData="onData"></DataTable>
   </div>
 </template>
 
@@ -11,7 +11,7 @@ import DataTable from "~/components/DataTable.vue";
 
 const data: any = ref([])
 
-function onData(payload: string) {
+function onData(payload: any) {
   data.value = payload
 }
 

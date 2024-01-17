@@ -8,6 +8,11 @@ export default defineNuxtConfig({
     devtools: {enabled: true},
     devServer: {
         port: 3001
+    },
+    runtimeConfig: {
+        public: {
+            apiBaseUrl: process.env.API_BASE_URL
+        }
     }
 
 })

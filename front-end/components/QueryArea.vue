@@ -14,6 +14,7 @@ import {ref} from "vue";
 import sql from "../sql/sql.enum"
 import db from "../sql/db.enum"
 
+const {$api} = useNuxtApp();
 const emit = defineEmits(['outputData'])
 const text = ref('');
 
@@ -23,25 +24,12 @@ async function flowDB() {
 }
 
 async function sendQuery() {
-  try {
-    const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    const raw = JSON.stringify({
-      "sql": text.value
-    });
-    const requestOptions: RequestInit = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow'
-    };
-    const response = await fetch("http://localhost:3000/query", requestOptions)
-    emit('outputData', await response.json())
-
-  } catch (e) {
-    console.error('Fetch error:', e);
-  }
+  const {
+    data: rows,
+    pending,
+    error
+  } = await $api.query.getRows(text.value);
+  console.log(rows.value)
+  emit('outputData', rows.value)
 }
-
-
 </script>
