@@ -5,6 +5,8 @@
       :pagination.sync="pagination"
       :rows="data"
       :separator="separator"
+      dense
+      @row-click="onRowClick"
   >
     <template v-slot:top-right>
       <q-input v-model="filter" borderless debounce="300" dense placeholder="Search">
@@ -21,7 +23,7 @@ import {ref} from "vue"
 const separator = ref('vertical')
 const filter = ref('')
 const pagination = {
-  rowsPerPage: 15,
+  rowsPerPage: 30,
 }
 const props = defineProps({
   data: {
@@ -42,4 +44,8 @@ const columns = computed(() => {
     }
   })
 })
+
+function onRowClick(e: Event, row: any) {
+  console.log(e, row.tablename)
+}
 </script>

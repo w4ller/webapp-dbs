@@ -6,5 +6,8 @@ export default defineNuxtConfig({
         'nuxt-quasar-ui'
     ],
     devtools: {enabled: true},
+    devServer: {
+        port: 3001
+    }
 
 })

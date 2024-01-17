@@ -9,8 +9,8 @@ COPY yarn.lock ./
 USER node
 
 RUN yarn install
-COPY ./src ./src
-#COPY --chown=node:node .. .
 #COPY . .
-CMD ["yarn", "start:dev"]
+COPY --chown=node:node .. .
+#COPY . .
+CMD ["yarn", "dev"]
 EXPOSE 3000

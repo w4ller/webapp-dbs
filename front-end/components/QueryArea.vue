@@ -5,15 +5,22 @@
     <div class="q-gutter-xs">
       <q-separator/>
       <q-btn @click="sendQuery">Send query</q-btn>
+      <q-btn @click="flowDB">FlowDB</q-btn>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
 import {ref} from "vue";
+import sql from "../sql/sql.enum"
+import db from "../sql/db.enum"
 
 const emit = defineEmits(['outputData'])
-const text = ref('test3:select id from media;');
+const text = ref('');
 
+async function flowDB() {
+  text.value = `${db.FLOW_DB}:${sql.tables}`
+  await sendQuery()
+}
 
 async function sendQuery() {
   try {

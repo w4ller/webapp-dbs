@@ -1,6 +1,6 @@
 version: '3.7'
 services:
-  cryw4backend:
+  dbs-back-end:
     image: webapp-dbs-back-end:latest
     network_mode: "host"
     volumes:
@@ -8,7 +8,16 @@ services:
       - "/home/node/app/node_modules"
     ports:
       - "3000:3000"
-      - "5432:5432"	
+      - "3001:3001"
+      - "5432:5432"
     command:
-      ["yarn", "start:dev"]
+      [ "yarn", "start:dev" ]
+  dbs-front-end:
+    image: webapp-dbs-front-end:latest
+    network_mode: "host"
+    volumes:
+      - "/home/lucatognazzi/projects/webapp-dbs/front-end:/home/node/app"
+      - "/home/node/app/node_modules"
+    command:
+      [ "yarn", "dev" ]
 
