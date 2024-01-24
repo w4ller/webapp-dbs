@@ -11,7 +11,7 @@ export class QueryDbController extends BaseController {
         this.intializeRoutes()
     }
 
-    public async query(_request: express.Request, _response: express.Response): Promise<void> {
+    public async query(_request: express.Request, _response: express.Response): Promise<any> {
         try {
             const builder = new QueryBuilder()
             _response.send(await builder.build(_request.body.sql))

@@ -1,6 +1,8 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+Object.defineProperty(exports, "__esModule", {value: true});
 exports.QueryBuilder = void 0;
+
+
 const tslib_1 = require("tslib");
 /**
  * Example query:
@@ -9,22 +11,26 @@ const tslib_1 = require("tslib");
  */
 const DbsSingleton_service_1 = require("../service/DbsSingleton.service");
 const BlacklistQueryCommands_enum_1 = require("./BlacklistQueryCommands.enum");
+
 class QueryBuilder {
     constructor() {
         return this;
     }
+
     replaceParams(sql, params) {
         return sql.replace(/@(\d+)/g, function (match, idx) {
             const idxArray = parseInt(idx, 10);
             return params[idxArray] || match;
         });
     }
+
     thorwErrorOnBlacklistCommands(query) {
         if (Object.values(BlacklistQueryCommands_enum_1.BlacklistQueryCommandsEnum)
             .some(value => query.toUpperCase().includes(value.toUpperCase()))) {
             throw new Error('Modify or write databases is not allowed');
         }
     }
+
     singleQuery(query, params = null) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             if (!query)
@@ -36,6 +42,7 @@ class QueryBuilder {
             return result;
         });
     }
+
     arrayToSqlString(array) {
         if (array.length <= 1)
             return [array[0].toString()];
@@ -46,6 +53,7 @@ class QueryBuilder {
         }).toString();
         return [`(${sql})`];
     }
+
     formatParams(result) {
         let a = result.rows.map((row) => {
             return row[result.fields[0].name];
@@ -53,6 +61,7 @@ class QueryBuilder {
         a = this.arrayToSqlString(a);
         return a;
     }
+
     parseQuery(query) {
         var _a;
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
@@ -67,11 +76,13 @@ class QueryBuilder {
             return (_a = result.rows) !== null && _a !== void 0 ? _a : [];
         });
     }
+
     build(query) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             return this.parseQuery(query);
         });
     }
 }
+
 exports.QueryBuilder = QueryBuilder;
 //# sourceMappingURL=QueryBuilder.js.map

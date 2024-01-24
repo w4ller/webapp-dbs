@@ -1,7 +1,7 @@
-import express = require('express')
+import express from "express"
 
 class BaseController {
-public router = express.Router()
+    public router = express.Router()
 }
 
 export default BaseController

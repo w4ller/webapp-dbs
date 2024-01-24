@@ -5,29 +5,47 @@
  */
 import {DbsSingletonService} from "../service/DbsSingleton.service";
 import {BlacklistQueryCommandsEnum} from "./BlacklistQueryCommands.enum";
+import {IQueryResponse} from "../service/IQueryResponse";
+
 export class QueryBuilder {
 
+    private response: IQueryResponse = {
+        dbName: '',
+        rows: []
+    }
+
     constructor() {
-        return this;
+    }
+
+    async build(query: string): Promise<IQueryResponse> {
+        return this.parseQuery(query)
     }
 
     private replaceParams(sql: string, params: Array<string>) {
-        return sql.replace(/@(\d+)/g, function(match: string, idx) {
+        return sql.replace(/@(\d+)/g, function (match: string, idx) {
             const idxArray = parseInt(idx, 10);
             return params[idxArray] || match
         })
     }
 
-    private thorwErrorOnBlacklistCommands(query: String) {
+    private throwErrorOnBlacklistCommands(query: String) {
         if (Object.values(BlacklistQueryCommandsEnum)
             .some(value => query.toUpperCase().includes(value.toUpperCase()))) {
             throw new Error('Modify or write databases is not allowed')
         }
     }
+
+    private removeComments(query: string): string {
+        const lines = query.split('\n')
+        return lines.map(l => l.split('--')[0]).join('')
+    }
+
     private async singleQuery(query: string, params: Array<string> = null): Promise<any> {
-        if (!query) throw new Error ('No query to execute')
-        this.thorwErrorOnBlacklistCommands(query)
-        const [db , sql] = query.split(':')
+        if (!query) throw new Error('No query to execute')
+        this.throwErrorOnBlacklistCommands(query)
+        query = this.removeComments(query)
+        const [db, sql] = query.split(':')
+        this.response.dbName = db
         const sqlWithParams = params ? this.replaceParams(sql, params) : sql
         const result = await DbsSingletonService.getInstance().db(db.trim()).query(`${sqlWithParams};`)
         return result
@@ -41,6 +59,7 @@ export class QueryBuilder {
         }).toString()
         return [`(${sql})`]
     }
+
     private formatParams(result: any): Array<string> {
         let a = result.rows.map((row: any) => {
             return row[result.fields[0].name]
@@ -55,13 +74,11 @@ export class QueryBuilder {
         const queries = query.split(';')
         queries.pop()
         for (let n = 0; n <= queries.length - 1; n++) {
-            const r = await this.singleQuery(queries[n], params[n-1] )
-            n !== queries.length -1 ? params.push(this.formatParams(r)) : result = r
+            const r = await this.singleQuery(queries[n], params[n - 1])
+            n !== queries.length - 1 ? params.push(this.formatParams(r)) : result = r
         }
-        return result.rows ?? []
-    }
-    async build(query: string): Promise<any> {
-        return this.parseQuery(query)
+        this.response.rows = result.rows ?? []
+        return this.response
     }
 
 }

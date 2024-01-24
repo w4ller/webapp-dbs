@@ -3,7 +3,7 @@
       :columns="columns"
       :filter="filter"
       :pagination.sync="pagination"
-      :rows="tableRows"
+      :rows="dbData?.rows"
       :separator="separator"
       dense
       @row-click="onRowClick"
@@ -18,50 +18,43 @@
   </q-table>
 </template>
 <script lang="ts" setup>
-import {ref} from "vue"
 import sql from "../sql/sql.enum"
+import type {IQueryResponse} from "~/components/Tabs.vue";
 
-const {$api} = useNuxtApp();
+const emit = defineEmits<{
+  dtClick: [data: string]
+}>()
 const separator = ref('vertical')
 const filter = ref('')
-const tableRows = ref([])
-const emit = defineEmits(['outputData'])
 const pagination = {
   rowsPerPage: 30,
 }
-const props = defineProps({
-  data: {
-    type: Object,
-    require: true,
-    default: []
-  },
-
-})
+const props = defineProps<{
+  dbData: IQueryResponse
+}>()
 const columns = computed(() => {
-  return Object.keys(props.data[0] ?? []).map((key: string) => {
-    return {
-      name: key,
-      label: key,
-      field: key,
-      sortable: true,
-      align: 'left'
-    }
-  })
+  const [firstRow] = props.dbData?.rows ?? [{}]
+  if (firstRow) {
+    return Object.keys(firstRow).map((key: string) => {
+      return {
+        name: key,
+        label: key,
+        field: key,
+        sortable: true,
+        align: 'left'
+      }
+    })
+  }
+  console.log(firstRow)
+  return []
 })
 
 
 async function onRowClick(e: Event, row: any) {
-
-  const {
-    data: rows,
-    pending,
-    error
-  }: any = await $api.query.getRows(`flowDB:${sql.selectAllFrom} ${row.tablename};`)
-  emit('outputData', rows.value)
+  if (row.tablename) {
+    emit('dtClick', `${props.dbData.dbName}:${sql.selectAllFrom} ${row.tablename};`)
+  }
 }
 
-watch(() => props.data, (data: any) => {
-  tableRows.value = data
-});
 
 </script>

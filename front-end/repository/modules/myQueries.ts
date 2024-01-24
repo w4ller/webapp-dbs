@@ -1,34 +1,31 @@
 import {type FetchOptions} from 'ofetch';
 import {type AsyncDataOptions} from '#app';
 
+
 // locals
 import FetchFactory from '../factory';
-import type {IQueryResponse} from "~/components/Tabs.vue";
+import type {ITab} from "~/components/Tabs.vue";
 
-type IRows = {}
-
-class QueryModule extends FetchFactory<IQueryResponse> {
-    private RESOURCE = '/query';
+class MyQueryModule extends FetchFactory<{ queries: ITab[] }> {
+    private RESOURCE = '/myQueries';
 
     /**
      * Return the response as array
      * @param asyncDataOptions options for `useAsyncData`
      * @returns
      */
-    async getRows(
-        sql: string,
-        asyncDataOptions?: AsyncDataOptions<IQueryResponse>
+    async getQueries(
+        asyncDataOptions?: AsyncDataOptions<{ queries: ITab[] }>
     ) {
-
         return useAsyncData(
             () => {
                 const fetchOptions: FetchOptions<'json'> = {
                     headers: {}
                 };
                 return this.call(
-                    'POST',
+                    'GET',
                     `${this.RESOURCE}`,
-                    {sql: sql}, // body
+                    undefined,
                     fetchOptions
                 )
             },
@@ -37,4 +34,4 @@ class QueryModule extends FetchFactory<IQueryResponse> {
     }
 }
 
-export default QueryModule;
+export default MyQueryModule;

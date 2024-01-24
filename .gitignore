@@ -3,3 +3,5 @@ front-end-bk/node-modules
 .idea
 back-end/.idea
 front-end-bk/.idea
+
+back-end/db.json

@@ -1,15 +1,17 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "ES2020",
     "esModuleInterop": true,
     "target": "es6",
     "noImplicitAny": true,
-    "moduleResolution": "node",
+    "moduleResolution": "Node",
     "sourceMap": true,
-    "outDir": "dist",
+    "outDir": "./dist",
     "baseUrl": ".",
     "paths": {
-      "*": ["node_modules/*"]
+      "*": [
+        "node_modules/*"
+      ]
     },
     "pretty": true,
     "importHelpers": true,
@@ -26,5 +28,8 @@
     "experimentalDecorators": false,
     "resolveJsonModule": true
   },
-  "include": ["src/**/*"]
+  "include": [
+    "src/**/*"
+  ],
+  "exports": "./dist/index.js"
 }
