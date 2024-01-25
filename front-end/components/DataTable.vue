@@ -19,7 +19,8 @@
 </template>
 <script lang="ts" setup>
 import sql from "../sql/sql.enum"
-import type {IQueryResponse} from "~/components/Tabs.vue";
+import type {IQueryResponse} from "~/components/IQueryResponse";
+
 
 const emit = defineEmits<{
   dtClick: [data: string]

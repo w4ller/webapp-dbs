@@ -3,9 +3,7 @@ import {type AsyncDataOptions} from '#app';
 
 // locals
 import FetchFactory from '../factory';
-import type {IQueryResponse} from "~/components/Tabs.vue";
-
-type IRows = {}
+import type {IQueryResponse} from "~/components/IQueryResponse";
 
 class QueryModule extends FetchFactory<IQueryResponse> {
     private RESOURCE = '/query';

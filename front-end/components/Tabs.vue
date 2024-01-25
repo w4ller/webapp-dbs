@@ -29,19 +29,11 @@
 </template>
 
 <script lang="ts" setup>
+import type {ITab} from "~/components/ITab";
+import type {IQueryResponse} from "~/components/IQueryResponse";
+
 const {$api} = useNuxtApp()
 
-export interface IQueryResponse {
-  dbName: string,
-  rows: Array<any>
-}
-
-export interface ITab {
-  id: number,
-  name: string,
-  queryContent: string,
-  resultData: IQueryResponse
-}
 
 const tabName = ref('query0')
 const {

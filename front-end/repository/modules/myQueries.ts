@@ -4,7 +4,8 @@ import {type AsyncDataOptions} from '#app';
 
 // locals
 import FetchFactory from '../factory';
-import type {ITab} from "~/components/Tabs.vue";
+import type {ITab} from "~/components/ITab";
+
 
 class MyQueryModule extends FetchFactory<{ queries: ITab[] }> {
     private RESOURCE = '/myQueries';

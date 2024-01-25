@@ -16,7 +16,7 @@ export class QueryDbController extends BaseController {
             const builder = new QueryBuilder()
             _response.send(await builder.build(_request.body.sql))
         } catch (error: any) {
-            _response.send({
+            _response.status(500).send({
                 error: {
                     message: error.message,
                     stack: error.stack
