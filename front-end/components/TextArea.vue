@@ -1,11 +1,14 @@
 <template>
   <div>
     <div
-        class="textarea-highlight"
+
+        :style="{ height: dynamicHeight }"
+        class="textarea textarea-highlight"
         v-html="textareaHighlighted"
     />
     <div
         ref="textarea"
+
         class="textarea"
         contenteditable="true"
         @click="setHightlightText"
@@ -28,10 +31,12 @@ const emit = defineEmits<{
 }>()
 
 const text = defineModel({type: String})
-const textarea = ref<HTMLElement | null>(null)
+const textarea = ref<HTMLElement>()
 const textareaHighlighted = ref('')
 let highlightedTextStart: number = 0
 let highlightedTextEnd: number = 0
+const height = ref<number>(250)
+let resize = null
 
 function sendQuery() {
   nextTick().then(() => {
@@ -75,8 +80,19 @@ function getSelectionText() {
   return selectedTxt;
 }
 
+function onResize() {
+  height.value = textarea?.value?.clientHeight ?? 0
+}
+
+const dynamicHeight = computed(() => {
+  return `${height.value}px`
+})
+
+
 onMounted(() => {
   textarea?.value?.insertAdjacentHTML('afterbegin', text.value ?? '')
+  resize = new ResizeObserver(onResize)
+  resize.observe(textarea?.value ?? new HTMLElement())
 })
 
 </script>
@@ -94,6 +110,7 @@ onMounted(() => {
   resize: vertical;
   white-space: pre-wrap;
   outline: 0px solid transparent;
+  font-size: 19px;
 }
 
 .textarea-highlight {
@@ -101,17 +118,8 @@ onMounted(() => {
   pointer-events: none;
   background-color: transparent;
   color: transparent;
-  height: 250px;
-  width: 100%;
-  -moz-appearance: textfield-multiline;
-  -webkit-appearance: textarea;
-  border: 1px solid gray;
-  font: medium -moz-fixed;
-  overflow: auto;
-  padding: 2px;
-  resize: vertical;
-  white-space: pre-wrap;
-  outline: 0px solid transparent;
+  border: 0px;
+
 }
 
 .red {
