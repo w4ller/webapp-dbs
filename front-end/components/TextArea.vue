@@ -1,129 +1,87 @@
 <template>
   <div>
-    <!--    <q-input ref="textarea" v-model="text" type="textarea"
-                 @blur="setHighlightedText"
-                 @click="getHighlightedText"
-                   @blur="setHighlightedText"
-
-        />-->
     <div
-        ref="textarea"
         class="textarea-highlight"
         v-html="textareaHighlighted"
-    >
-
-    </div>
-
+    />
     <div
         ref="textarea"
         class="textarea"
         contenteditable="true"
-        @click="thisRespondHightlightText"
-        @keyup="updateContent"
-        @keydown.enter="preventDiv"
-    >
-      {{ text }}
-    </div>
-
+        @click="setHightlightText"
+        @keydown="removeHighlightedText"
+        v-text="textarea?.innerText"
+    />
 
     <div class="q-gutter-xs">
       <q-separator/>
       <q-btn @click="sendQuery">Send query</q-btn>
     </div>
   </div>
-  {{ textareaHighlighted }} {{ highlightedTextStart }} {{ highlightedTextEnd }}
 </template>
 <script lang="ts" setup>
 import {ref} from 'vue'
 
-
-// const emit = defineEmits(['sendQuery', 'sendHighlighted'])
 const emit = defineEmits<{
   (e: 'sendQuery'): void,
   (e: 'sendHighlighted', value: string): void
 }>()
 
 const text = defineModel({type: String})
-const textarea = ref('')
+const textarea = ref<HTMLElement | null>(null)
 const textareaHighlighted = ref('')
 let highlightedTextStart: number = 0
 let highlightedTextEnd: number = 0
 
 function sendQuery() {
   nextTick().then(() => {
+        text.value = textarea.value?.innerText
         const highlighted = getSelectionText()
-        console.log('sendHigh', highlighted)
         highlighted ? emit('sendHighlighted', highlighted) : emit('sendQuery')
       }
   )
 }
 
-function preventDiv($event: Event) {
-  $event.preventDefault()
-  document.execCommand('insertLineBreak')
-
-}
-
-function updateContent(event: Event) {
-  // (event.target as HTMLInputElement).blur()
+function removeHighlightedText() {
   textareaHighlighted.value = ''
-  text.value = textarea.value?.innerText
 }
 
-function thisRespondHightlightText() {
+function setHightlightText() {
   textareaHighlighted.value = ''
   const selectedText = getSelectionText();
+  getSelectionRange()
   if (!selectedText) return
-  const txt = text.value || ''
-  console.log(txt)
+  const txt = textarea.value?.innerText || ''
   textareaHighlighted.value = [txt.slice(0, highlightedTextEnd), '</span>', txt.slice(highlightedTextEnd)].join('')
   textareaHighlighted.value = [textareaHighlighted.value.slice(0, highlightedTextStart), '<span class="red">', textareaHighlighted.value.slice(highlightedTextStart)].join('')
 }
 
+function getSelectionRange() {
+  let selection: Selection | null;
+  if (window.getSelection) {
+    selection = window?.getSelection()
+    const focus = selection?.focusOffset ?? 0
+    const anchor = selection?.anchorOffset ?? 0
+    highlightedTextStart = anchor < focus ? anchor : focus
+    highlightedTextEnd = focus > anchor ? focus : anchor
+  }
+}
+
 function getSelectionText() {
   let selectedTxt = '';
-  let selection = '';
-
   if (window.getSelection) {
-    selectedTxt = window?.getSelection()?.toString() || '';
-    selection = window?.getSelection() ?? ''
-    highlightedTextStart = selection.baseOffset < selection.focusOffset ? selection.baseOffset : selection.focusOffset
-    highlightedTextEnd = selection.focusOffset > selection.baseOffset ? selection.focusOffset : selection.baseOffset
-  } else if (document.selection && document.selection.type != "Control") {
-    selectedTxt = document.selection.createRange().text;
+    selectedTxt = window?.getSelection()?.toString() ?? '';
   }
-  console.log(selectedTxt)
   return selectedTxt;
 }
 
-function getHighlightedText(event: Event): string {
-  const textareaRef = textarea.value
-  highlightedTextStart = textareaRef?.nativeEl?.selectionStart
-  highlightedTextEnd = textareaRef?.nativeEl?.selectionEnd
-
-  console.log('asd', event)
-  if (!highlightedTextStart || !highlightedTextEnd) return ''
-  return text.value?.slice(highlightedTextStart, highlightedTextEnd) ?? ''
-}
-
-function setHighlightedText() {
-  const textareaRef = textarea.value
-  /*  textareaRef?.nativeEl?.selectionStart = highlightedTextStart
-    textareaRef?.nativeEl?.selectionEnd = highlightedTextEnd*/
-  console.log('asd', highlightedTextStart, highlightedTextEnd, textareaRef)
-}
-
-function removeTags(inputString: string) {
-
-  const pattern = /<[^>]*>/g;
-  const result = inputString.replace(pattern, '')
-  return result;
-}
+onMounted(() => {
+  textarea?.value?.insertAdjacentHTML('afterbegin', text.value ?? '')
+})
 
 </script>
 <style>
 .textarea {
-
   background-color: #fbfbfb;
   height: 250px;
   width: 100%;
@@ -154,10 +112,6 @@ function removeTags(inputString: string) {
   resize: vertical;
   white-space: pre-wrap;
   outline: 0px solid transparent;
-}
-
-.hide {
-  display: none !important;
 }
 
 .red {
