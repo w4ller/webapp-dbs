@@ -12,13 +12,8 @@
   <q-tab-panels v-model="tabName">
     <q-tab-panel v-for="(myTab, index) in tabs?.queries" :key="myTab.name" :name="myTab.name">
       <q-card>
-        <q-card-section class="q-pa-md">
-          <div class="q-mb-md">
-            <div class="q-flex q-items-start q-justify-between float-right">
-              <q-btn v-if="index !== 0" class="q-ml-auto" dense flat icon="close" round @click="closeCard(index)"/>
-            </div>
-          </div>
-        </q-card-section>
+        <q-btn v-if="index !== 0" class="q-ml-auto close-button" dense flat icon="close" round
+               @click="closeCard(index)"/>
         <QueryArea
             v-model:query="myTab.queryContent"
             v-model:result-data="myTab.resultData"
@@ -63,3 +58,9 @@ function closeCard(index: number) {
   tabName.value = tabs.value?.queries.find((t) => t.id === index)?.name || 'query1'
 }
 </script>
+<style>
+.close-button {
+  position: absolute;
+  left: 96%;
+}
+</style>

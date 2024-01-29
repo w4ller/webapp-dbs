@@ -1,7 +1,5 @@
 <script lang="ts" setup>
 import type {ModelRef} from "vue";
-import db from "~/sql/db.enum";
-import sql from "~/sql/sql.enum";
 import type {IQueryResponse} from "~/components/IQueryResponse";
 import type {IQueryError} from "~/components/IQueryError";
 
@@ -56,7 +54,7 @@ function showActiviti() {
   <q-item-section>
     <TextArea
         v-model="queryContent"
-        @sendQuery="sendQuery(queryContent)"/>
+        @sendHighlighted="sendQuery($event)" @sendQuery="sendQuery(queryContent)"/>
     <div class="q-gutter-xs">
       <q-btn @click="showFlowDbTables">FlowDB</q-btn>
       <q-btn @click="showTest3()">Test3</q-btn>
