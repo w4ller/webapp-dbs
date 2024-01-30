@@ -2,6 +2,7 @@
 import type {ModelRef} from "vue";
 import type {IQueryResponse} from "~/components/IQueryResponse";
 import type {IQueryError} from "~/components/IQueryError";
+import type {IDb} from "~/components/IDb";
 
 const {$api} = useNuxtApp()
 const queryContent = defineModel('query') as ModelRef<string>
@@ -21,10 +22,7 @@ async function sendQuery(sql: string) {
   errorData.value = error
   pendingData.value = pending.value && toRaw(pending.value)
   resultData.value = data.value && toRaw(data.value) || {} as IQueryResponse // rows ?? [{}]
-
-
 }
-
 
 const errors = computed(() => {
   console.log(errorData)
@@ -37,16 +35,11 @@ async function dataTableClick(data: string) {
 
 }
 
-function showFlowDbTables() {
-  resultData.value = store.flowDb
-}
-
-function showTest3() {
-  resultData.value = store.test3
-}
-
-function showActiviti() {
-  resultData.value = store.activiti
+function showDbTables(db: IDb) {
+  resultData.value = {
+    dbName: db.name,
+    rows: db.tables
+  }
 }
 </script>
 
@@ -56,9 +49,7 @@ function showActiviti() {
         v-model="queryContent"
         @sendHighlighted="sendQuery($event)" @sendQuery="sendQuery(queryContent)"/>
     <div class="q-gutter-xs">
-      <q-btn @click="showFlowDbTables">FlowDB</q-btn>
-      <q-btn @click="showTest3()">Test3</q-btn>
-      <q-btn @click="showActiviti()">Activiti</q-btn>
+      <q-btn v-for="db in store.dbs" @click="showDbTables(db)">{{ db.name }}</q-btn>
     </div>
     <q-separator/>
 

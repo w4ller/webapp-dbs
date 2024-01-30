@@ -3,10 +3,12 @@ import {$fetch, type FetchOptions} from 'ofetch';
 // locals
 import QueryModule from '../repository/modules/query';
 import MyQueriesModule from "../repository/modules/myQueries";
+import DbsModule from "~/repository/modules/dbs";
 
 interface IApiInstance {
     query: QueryModule;
     myQueries: MyQueriesModule;
+    dbs: DbsModule
 }
 
 export default defineNuxtPlugin((nuxtApp) => {
@@ -22,7 +24,8 @@ export default defineNuxtPlugin((nuxtApp) => {
     // An object containing all repositories we need to expose
     const modules: IApiInstance = {
         query: new QueryModule(apiFecther),
-        myQueries: new MyQueriesModule(apiFecther)
+        myQueries: new MyQueriesModule(apiFecther),
+        dbs: new DbsModule(apiFecther)
     };
 
     return {

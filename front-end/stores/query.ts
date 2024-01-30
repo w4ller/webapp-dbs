@@ -2,13 +2,15 @@ import {defineStore} from "pinia";
 import db from "~/sql/db.enum";
 import sql from "~/sql/sql.enum";
 import type {IQueryResponse} from "~/components/IQueryResponse";
+import type {IDb} from "~/components/IDb";
 
 
 export const queryStore = defineStore("queryStore", {
     state: () => ({
         flowDb: {} as IQueryResponse,
         test3: {} as IQueryResponse,
-        activiti: {} as IQueryResponse
+        activiti: {} as IQueryResponse,
+        dbs: [] as Array<IDb>
 
     }),
     actions: {
@@ -32,6 +34,13 @@ export const queryStore = defineStore("queryStore", {
                 data
             } = await $api.query.getRows(`${db.ACTIVITY}:${sql.tables}`);
             this.activiti = data.value as IQueryResponse
+        },
+        async dbsList() {
+            const {$api} = useNuxtApp()
+            const {
+                data
+            } = await $api.dbs.list();
+            this.dbs = data.value as Array<IDb>
         }
     },
 });
