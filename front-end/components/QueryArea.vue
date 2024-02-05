@@ -12,6 +12,18 @@ const fStore = filterStore()
 const {filter} = reactive(filterStore())
 
 
+/*
+const resultData = computed(() => {
+  if (qStore.queryResultSql) {
+    return qStore.queryResultSql as IQueryResponse
+  }
+  return {
+    dbName: qStore.db.name,
+    rows: qStore.table ?? qStore.db.tables
+  } as IQueryResponse
+})
+*/
+
 async function sendQuery(sql: string) {
   fStore.filter = {
     db: '',
@@ -19,8 +31,8 @@ async function sendQuery(sql: string) {
     sql: sql,
     tab: ''
   }
-  await qStore.filter()
-  resultData.value = qStore.queryResultSql
+  // await qStore.applyFilters()
+  // resultData.value = qStore.queryResultSql
 }
 
 const errors = computed(() => {
@@ -36,11 +48,10 @@ async function showDbTableFromButton(db: IDb) {
     sql: '',
     tab: ''
   }
-  await qStore.filter()
+//  await qStore.applyFilters()
 }
 
-async function fillTable() {
-  await qStore.filter()
+function fillTable() {
   if (qStore.queryResultSql) {
     resultData.value = qStore.queryResultSql
     return
@@ -52,13 +63,14 @@ async function fillTable() {
 }
 
 onMounted(async () => {
-  await qStore.dbsList()
-  await fillTable()
+
 })
+
 
 watch(() => filter,
     async () => {
-      await fillTable()
+      await qStore.applyFilters()
+      fillTable()
     },
     {deep: true}
 )

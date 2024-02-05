@@ -28,20 +28,14 @@ export const filterStore = defineStore("filterStore", () => {
             }
         },
         set(filter) {
-            console.log('filter', filter)
-            if (
-                filter.db === db.value &&
-                filter.table === table.value &&
-                filter.sql === sql.value &&
-                filter.tab === tab.value
-            ) return
+            const db = filter.db.toString()
             router.push({
                 path: 'dashboard',
                 query: {
-                    db: filter.db,
-                    table: filter.table,
-                    sql: filter.sql,
-                    tab: filter.tab,
+                    db: filter.db.toString(),
+                    table: filter.table.toString(),
+                    sql: filter.sql.toString(),
+                    tab: filter.tab.toString(),
                 }
             })
         },

@@ -14,10 +14,14 @@
       <q-card>
         <q-btn v-if="index !== 0" class="q-ml-auto close-button" dense flat icon="close" round
                @click="closeCard(index)"/>
-        <QueryArea
-            v-model:query="myTab.queryContent"
-            v-model:result-data="myTab.resultData"
-        />
+        <KeepAlive>
+          <QueryArea
+              ref="queryArea"
+              v-model:query="myTab.queryContent"
+              v-model:result-data="myTab.resultData"
+          />
+        </KeepAlive>
+
       </q-card>
     </q-tab-panel>
   </q-tab-panels>
@@ -27,7 +31,9 @@
 import type {ITab} from "~/components/ITab";
 import type {IQueryResponse} from "~/components/IQueryResponse";
 
+const qStore = queryStore()
 const {$api} = useNuxtApp()
+const queryArea = ref(null)
 
 
 const tabName = ref('query0')
@@ -57,6 +63,12 @@ function closeCard(index: number) {
   tabs.value?.queries.splice(index, 1)
   tabName.value = tabs.value?.queries.find((t) => t.id === index)?.name || 'query1'
 }
+
+onMounted(async () => {
+  await qStore.dbsList()
+  await qStore.applyFilters()
+})
+
 </script>
 <style>
 .close-button {

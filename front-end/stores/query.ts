@@ -36,7 +36,7 @@ export const queryStore = defineStore("queryStore", {
             this.pending = false
             return data.value
         },
-        async filter() {
+        async applyFilters() {
             const fStore = filterStore()
             if (fStore.sql) {
                 const data = await this.sendQuery(fStore.sql)
