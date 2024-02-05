@@ -17,7 +17,6 @@ export default defineNuxtPlugin((nuxtApp) => {
     const fetchOptions: FetchOptions = {
         baseURL: `${config.public.apiBaseUrl}`
     };
-
     // Create a new instance of $fecther with custom option
     const apiFecther = $fetch.create(fetchOptions);
 

@@ -8,14 +8,13 @@
     />
     <div
         ref="textarea"
-
         class="textarea"
         contenteditable="true"
         @click="setHightlightText"
         @keydown="removeHighlightedText"
         v-text="textarea?.innerText"
     />
-
+    {{ foundWord }}
     <div class="q-gutter-xs">
       <q-separator/>
       <q-btn @click="sendQuery">Send query</q-btn>
@@ -29,7 +28,8 @@ const emit = defineEmits<{
   (e: 'sendQuery'): void,
   (e: 'sendHighlighted', value: string): void
 }>()
-
+const store = queryStore()
+const dbs = [store.activiti, store.flowDb, store.test3]
 const text = defineModel({type: String})
 const textarea = ref<HTMLElement>()
 const textareaHighlighted = ref('')
@@ -48,8 +48,27 @@ function sendQuery() {
 }
 
 function removeHighlightedText() {
+  getSelectionRange()
+  getWritingWord()
+  console.log(highlightedTextStart, highlightedTextEnd)
   textareaHighlighted.value = ''
 }
+
+function getWritingWord() {
+  text.value = textarea.value?.innerText || ''
+  const arr = text.value.split(' ')
+  console.log(arr[arr.length - 1])
+}
+
+const lastWord = computed(() => {
+  const arr = text.value?.split(' ') ?? []
+  return arr[arr.length - 1] ?? ''
+})
+
+const foundWord = computed(() => {
+  // console.log(dbs.findIndex(db => db.dbName.includes(lastWord.value)))
+  return ''
+})
 
 function setHightlightText() {
   textareaHighlighted.value = ''

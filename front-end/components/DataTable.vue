@@ -2,6 +2,7 @@
   <q-table
       :columns="columns"
       :filter="filter"
+      :loading="loading"
       :pagination.sync="pagination"
       :rows="dbData?.rows"
       :separator="separator"
@@ -18,20 +19,17 @@
   </q-table>
 </template>
 <script lang="ts" setup>
-import sql from "../sql/sql.enum"
 import type {IQueryResponse} from "~/components/IQueryResponse";
 
-
-const emit = defineEmits<{
-  dtClick: [data: string]
-}>()
+const store = filterStore();
 const separator = ref('vertical')
 const filter = ref('')
 const pagination = {
   rowsPerPage: 30,
 }
 const props = defineProps<{
-  dbData: IQueryResponse
+  dbData: IQueryResponse,
+  loading: boolean
 }>()
 const columns = computed(() => {
   const [firstRow] = props.dbData?.rows ?? [{}]
@@ -46,16 +44,17 @@ const columns = computed(() => {
       }
     })
   }
-  console.log(firstRow)
   return []
 })
 
-
-async function onRowClick(e: Event, row: any) {
+function onRowClick(e: Event, row: any) {
   if (row.tablename) {
-    emit('dtClick', `${props.dbData.dbName}:${sql.selectAllFrom} ${row.tablename};`)
+    store.filter = {
+      db: props.dbData.dbName,
+      table: row.tablename,
+      sql: '',
+      tab: ''
+    }
   }
 }
-
-
 </script>

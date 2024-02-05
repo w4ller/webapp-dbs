@@ -19,5 +19,19 @@
     "database": "activiti",
     "password": "wasplab",
     "port": 5432
+  },
+  "imaging": {
+    "user": "imaging",
+    "host": "localhost",
+    "database": "imaging",
+    "password": "imaging",
+    "port": 5432
+  },
+  "wasp": {
+    "user": "wasp",
+    "host": "localhost",
+    "database": "wasp",
+    "password": "wasp",
+    "port": 5432
   }
 }

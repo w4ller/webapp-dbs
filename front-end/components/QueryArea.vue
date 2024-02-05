@@ -4,24 +4,23 @@ import type {IQueryResponse} from "~/components/IQueryResponse";
 import type {IQueryError} from "~/components/IQueryError";
 import type {IDb} from "~/components/IDb";
 
-const {$api} = useNuxtApp()
 const queryContent = defineModel('query') as ModelRef<string>
-const resultData = defineModel('resultData') as ModelRef<IQueryResponse>
-const pendingData = ref(false)
+const resultData = defineModel('resultData') as ModelRef<IQueryResponse | null>
 const errorData = ref(null) as any
-const store = queryStore()
+const qStore = queryStore()
+const fStore = filterStore()
+const {filter} = reactive(filterStore())
+
 
 async function sendQuery(sql: string) {
-  if (sql === '') return
-  const {
-    data,
-    pending,
-    error
-  } = await $api.query.getRows(sql);
-
-  errorData.value = error
-  pendingData.value = pending.value && toRaw(pending.value)
-  resultData.value = data.value && toRaw(data.value) || {} as IQueryResponse // rows ?? [{}]
+  fStore.filter = {
+    db: '',
+    table: '',
+    sql: sql,
+    tab: ''
+  }
+  await qStore.filter()
+  resultData.value = qStore.queryResultSql
 }
 
 const errors = computed(() => {
@@ -29,18 +28,41 @@ const errors = computed(() => {
   return errorData as IQueryError && toRaw(errorData) as IQueryError || {} as IQueryError
 })
 
-async function dataTableClick(data: string) {
-  await nextTick()
-  await sendQuery(data)
 
+async function showDbTableFromButton(db: IDb) {
+  fStore.filter = {
+    db: db.name,
+    table: '',
+    sql: '',
+    tab: ''
+  }
+  await qStore.filter()
 }
 
-function showDbTables(db: IDb) {
+async function fillTable() {
+  await qStore.filter()
+  if (qStore.queryResultSql) {
+    resultData.value = qStore.queryResultSql
+    return
+  }
   resultData.value = {
-    dbName: db.name,
-    rows: db.tables
+    dbName: qStore.db.name,
+    rows: qStore.table ?? qStore.db.tables
   }
 }
+
+onMounted(async () => {
+  await qStore.dbsList()
+  await fillTable()
+})
+
+watch(() => filter,
+    async () => {
+      await fillTable()
+    },
+    {deep: true}
+)
+
 </script>
 
 <template>
@@ -49,13 +71,13 @@ function showDbTables(db: IDb) {
         v-model="queryContent"
         @sendHighlighted="sendQuery($event)" @sendQuery="sendQuery(queryContent)"/>
     <div class="q-gutter-xs">
-      <q-btn v-for="db in store.dbs" @click="showDbTables(db)">{{ db.name }}</q-btn>
+      <q-btn v-for="db in qStore.dbs" @click="showDbTableFromButton(db)">{{ db.name }}</q-btn>
     </div>
     <q-separator/>
 
     <DataTable
         :db-data="resultData"
-        @dt-click="dataTableClick"/>
+        :loading="qStore.pending"/>
     <q-separator/>
     <div v-if="errorData?.value">
       <p>{{ errorData }}</p>
