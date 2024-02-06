@@ -10,10 +10,12 @@
 
 
 <script lang="ts" setup>
-const store = queryStore()
+const qStore = queryStore()
+const fStore = filterStore()
 
 
 onMounted(async () => {
-  await store.dbsList()
+  await qStore.dbsList()
+  fStore.initializeFilterFromUrl = true
 })
 </script>

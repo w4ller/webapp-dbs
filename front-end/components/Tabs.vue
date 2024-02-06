@@ -7,7 +7,7 @@
       dense
   >
     <q-tab v-for="myTab in tabs?.queries" :name="myTab.name" icon="storage">{{ myTab.name }}</q-tab>
-    <q-tab icon="add" name="addButton" @click="addNewTab()"></q-tab>
+    <q-tab icon="add" name="addButton" @click="addNewTabFromButton()"></q-tab>
   </q-tabs>
   <q-tab-panels v-model="tabName">
     <q-tab-panel v-for="(myTab, index) in tabs?.queries" :key="myTab.name" :name="myTab.name">
@@ -32,6 +32,7 @@ import type {ITab} from "~/components/ITab";
 import type {IQueryResponse} from "~/components/IQueryResponse";
 
 const qStore = queryStore()
+const fStore = filterStore()
 const {$api} = useNuxtApp()
 const queryArea = ref(null)
 
@@ -44,11 +45,20 @@ const {
 } = await $api.myQueries.getQueries();
 
 
-function addNewTab() {
+function addNewTabFromButton() {
   const max = Math.max(...tabs.value?.queries.map(v => v.id) ?? [])
+  addNewTab(max + 1)
+  fStore.filter = {
+    db: '',
+    table: '',
+    sql: ''
+  }
+}
+
+function addNewTab(tabIndex: number) {
   const newTab: ITab = {
-    id: max + 1,
-    name: `query${max + 1}`,
+    id: tabIndex,
+    name: `query${tabIndex}`,
     queryContent: '',
     resultData: {
       dbName: '',
@@ -64,9 +74,18 @@ function closeCard(index: number) {
   tabName.value = tabs.value?.queries.find((t) => t.id === index)?.name || 'query1'
 }
 
+/*function selectTabFromUrlQueryParam() {
+  if (!fStore.tab) return
+  if (tabs.value?.queries.find((t) => t.id === parseInt(fStore.tab))) {
+    tabName.value = `query${fStore.tab}`
+    return
+  }
+  addNewTab(parseInt(fStore.tab))
+}*/
+
 onMounted(async () => {
   await qStore.dbsList()
-  await qStore.applyFilters()
+  // selectTabFromUrlQueryParam()
 })
 
 </script>

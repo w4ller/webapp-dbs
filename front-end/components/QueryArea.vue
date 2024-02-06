@@ -28,8 +28,7 @@ async function sendQuery(sql: string) {
   fStore.filter = {
     db: '',
     table: '',
-    sql: sql,
-    tab: ''
+    sql: sql
   }
   // await qStore.applyFilters()
   // resultData.value = qStore.queryResultSql
@@ -45,8 +44,7 @@ async function showDbTableFromButton(db: IDb) {
   fStore.filter = {
     db: db.name,
     table: '',
-    sql: '',
-    tab: ''
+    sql: ''
   }
 //  await qStore.applyFilters()
 }

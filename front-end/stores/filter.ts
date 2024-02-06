@@ -13,10 +13,8 @@ export const filterStore = defineStore("filterStore", () => {
     const sql = computed(() => {
         return route.query.sql?.toString() ?? ''
     })
-    const tab = computed(() => {
-        return route.query.tab?.toString() ?? ''
-    })
 
+    const initializeFilterFromUrl = ref(false)
 
     const filter = computed({
         get: () => {
@@ -24,21 +22,20 @@ export const filterStore = defineStore("filterStore", () => {
                 db,
                 table,
                 sql,
-                tab
+                first: initializeFilterFromUrl
             }
         },
         set(filter) {
-            const db = filter.db.toString()
+            initializeFilterFromUrl.value = true
             router.push({
                 path: 'dashboard',
                 query: {
                     db: filter.db.toString(),
                     table: filter.table.toString(),
                     sql: filter.sql.toString(),
-                    tab: filter.tab.toString(),
                 }
             })
         },
     })
-    return {db, table, tab, sql, filter}
+    return {db, table, sql, filter, initializeFilterFromUrl}
 });

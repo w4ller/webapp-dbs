@@ -58,7 +58,11 @@ export const queryStore = defineStore("queryStore", {
                 this.table = null
                 this.queryResultSql = null
                 this.db = this.dbs.find((db) => db.name === fStore.db) ?? null
+                return
             }
+            this.table = null
+            this.queryResultSql = null
+            this.db = null
         }
     },
 });
