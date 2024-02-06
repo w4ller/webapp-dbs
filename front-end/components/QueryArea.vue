@@ -56,7 +56,9 @@ function fillTable() {
   }
   resultData.value = {
     dbName: qStore.db.name,
-    rows: qStore.table ?? qStore.db.tables
+    rows: qStore.table ?? qStore.db.tables,
+    error: '',
+    executedQuery: ''
   }
 }
 

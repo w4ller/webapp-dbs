@@ -1,4 +1,6 @@
 export interface IQueryResponse {
     rows: Array<any>,
-    dbName: string
+    dbName: string,
+    executedQuery: string,
+    error: string
 }

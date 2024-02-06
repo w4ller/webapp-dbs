@@ -11,7 +11,9 @@ export class QueryBuilder {
 
     private response: IQueryResponse = {
         dbName: '',
-        rows: []
+        rows: [],
+        executedQuery: '',
+        error: ''
     }
 
     constructor() {
@@ -69,16 +71,24 @@ export class QueryBuilder {
     }
 
     private async parseQuery(query: string): Promise<any> {
-        const params: Array<any> = []
-        let result = null
-        const queries = query.split(';')
-        queries.pop()
-        for (let n = 0; n <= queries.length - 1; n++) {
-            const r = await this.singleQuery(queries[n], params[n - 1])
-            n !== queries.length - 1 ? params.push(this.formatParams(r)) : result = r
+        try {
+            this.response.executedQuery = query
+            const params: Array<any> = []
+            let result = null
+            const queries = query.split(';')
+            queries.pop()
+            for (let n = 0; n <= queries.length - 1; n++) {
+                const r = await this.singleQuery(queries[n], params[n - 1])
+                n !== queries.length - 1 ? params.push(this.formatParams(r)) : result = r
+            }
+            this.response.rows = result.rows ?? []
+
+            return this.response
+        } catch (error: any) {
+            this.response.error = error.message
+            return this.response
         }
-        this.response.rows = result.rows ?? []
-        return this.response
+
     }
 
 }

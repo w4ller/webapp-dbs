@@ -50,7 +50,7 @@ export const queryStore = defineStore("queryStore", {
                 const data = await this.sendQuery(query)
                 this.db = this.dbs.find((db) => db.name === fStore.db) ?? null
                 this.table = data && toRaw(data.rows) || []
-                this.queryResultSql = null
+                this.queryResultSql = data && toRaw(data) || {} as IQueryResponse
                 return
 
             }

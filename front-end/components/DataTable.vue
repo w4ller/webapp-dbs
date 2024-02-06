@@ -3,10 +3,13 @@
       :columns="columns"
       :filter="filter"
       :loading="loading"
+      :no-data-label="dbData?.error"
       :pagination.sync="pagination"
       :rows="dbData?.rows"
       :separator="separator"
+      :title="title"
       dense
+      no-results-label="The filter didn't uncover any results"
       @row-click="onRowClick"
   >
     <template v-slot:top-right>
@@ -16,6 +19,18 @@
         </template>
       </q-input>
     </template>
+
+    <template v-slot:no-data="{ icon, message, filter }">
+      <div class="full-width row flex-center text-accent q-gutter-sm">
+        <q-icon name="sentiment_dissatisfied" size="2em"/>
+        <span>
+
+          <h6> {{ message }} </h6>
+          </span>
+        <q-icon :name="filter ? 'filter_b_and_w' : icon" size="2em"/>
+      </div>
+    </template>
+
   </q-table>
 </template>
 <script lang="ts" setup>
@@ -31,6 +46,11 @@ const props = defineProps<{
   dbData: IQueryResponse,
   loading: boolean
 }>()
+
+const title = computed(() => {
+  return props.dbData?.executedQuery ? `${props.dbData?.executedQuery}` : `${props.dbData.dbName}`
+})
+
 const columns = computed(() => {
   const [firstRow] = props.dbData?.rows ?? [{}]
   if (firstRow) {
@@ -53,7 +73,7 @@ function onRowClick(e: Event, row: any) {
       db: props.dbData.dbName,
       table: row.tablename,
       sql: '',
-      tab: ''
+
     }
   }
 }
